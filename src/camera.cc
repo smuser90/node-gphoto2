@@ -67,6 +67,7 @@ Handle<Value> GPCamera::TakePicture(const Arguments& args) {
     Local<Value> target = options->Get(String::New("targetPath"));
     Local<Value> preview = options->Get(String::New("preview"));
     Local<Value> socket  = options->Get(String::New("socket"));
+    Local<Value> keep  = options->Get(String::New("keepOnCamera"));
     if (target->IsString()) {
       picture_req->target_path = cv::CastFromJS<string>(target);
       picture_req->download = true;
@@ -80,6 +81,9 @@ Handle<Value> GPCamera::TakePicture(const Arguments& args) {
     }
     if (preview->IsBoolean()) {
       picture_req->preview = preview->ToBoolean()->Value();
+    }
+    if (keep->IsBoolean()) {
+      picture_req->keepOnCamera = keep->ToBoolean()->Value();
     }
   } else {
     REQ_FUN_ARG(0, cb);
