@@ -182,12 +182,11 @@ void GPCamera::Async_WaitEvent(uv_work_t *req) {
   wait_event_request *event_req = static_cast<wait_event_request *>(req->data);
   int ret;
 
-  event_req->cameraObject->lock();
-
   CameraEventType eventType;
   void *eventData;
 
-  std::cout << "\nAsync_WaitEvent\n";
+  event_req->cameraObject->lock();
+
 
   ret = gp_camera_wait_for_event(event_req->camera,
                                  event_req->timeoutMs,
@@ -220,6 +219,8 @@ void GPCamera::Async_WaitEvent(uv_work_t *req) {
       path << camera_file_path->name;
       event_req->path = path.str();
     }
+    std::cout << "\nAsync_WaitEventCb: " << event_req->eventType;
+    std::cout  << "\n    path: " << event_req->path;
   }
 }
 
@@ -241,9 +242,6 @@ void GPCamera::Async_WaitEventCb(uv_work_t *req, int status) {
     argv[1] = Undefined();
     argv[2] = Undefined();
   }
-
-  std::cout << "\nAsync_WaitEventCb: " << event_req->eventType;
-  std::cout  << "\n    path: " << event_req->path;
 
   event_req->cb->Call(Context::GetCurrent()->Global(), argc, argv);
 

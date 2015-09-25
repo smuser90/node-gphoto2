@@ -69,8 +69,7 @@ class GPCamera : public node::ObjectWrap {
     GPContext *context;
     std::string eventType;
     std::string path;
-    unsigned long int length;  // NOLINT
-    unsigned int timeoutMs;
+    int timeoutMs;
     int ret;
   };
 
