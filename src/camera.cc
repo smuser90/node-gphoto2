@@ -3,6 +3,7 @@
 #include <gphoto2/gphoto2-widget.h>
 #include <sstream>
 #include <string>
+#include <iostream> // NOLINT
 #include "camera.h"  // NOLINT
 
 using std::string;
@@ -172,6 +173,8 @@ Handle<Value> GPCamera::WaitEvent(const Arguments& args) {
   }
 
   gp_camera_ref(event_req->camera);
+
+  std::cout << "\nSTARTING ASYNC WaitEvent\n";
 
   DO_ASYNC(event_req, Async_WaitEvent, Async_WaitEventCb);
   return Undefined();
