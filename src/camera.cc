@@ -174,8 +174,6 @@ Handle<Value> GPCamera::WaitEvent(const Arguments& args) {
 
   gp_camera_ref(event_req->camera);
 
-  std::cout << "\nSTARTING ASYNC WaitEvent\n";
-
   DO_ASYNC(event_req, Async_WaitEvent, Async_WaitEventCb);
   return Undefined();
 }
@@ -189,6 +187,8 @@ void GPCamera::Async_WaitEvent(uv_work_t *req) {
   CameraEventType eventType;
   void *eventData;
 
+  std::cout << "\nAsync_WaitEvent\n";
+
   ret = gp_camera_wait_for_event(event_req->camera,
                                  event_req->timeoutMs,
                                  &eventType,
@@ -197,14 +197,18 @@ void GPCamera::Async_WaitEvent(uv_work_t *req) {
 
   event_req->cameraObject->unlock();
 
+  event_req->ret = ret;
+
   std::string type = "unknown";
   if (eventType == GP_EVENT_TIMEOUT) type = "timeout";
   if (eventType == GP_EVENT_FILE_ADDED) type = "file_added";
   if (eventType == GP_EVENT_FOLDER_ADDED) type = "folder_added";
 
-  event_req->eventType = type;
+  if (event_req->ret == GP_OK) {
+    event_req->eventType = type;
 
-  if (eventType == GP_EVENT_FILE_ADDED || eventType == GP_EVENT_FOLDER_ADDED) {
+    if (eventType == GP_EVENT_FILE_ADDED
+        || eventType == GP_EVENT_FOLDER_ADDED) {
       CameraFilePath *camera_file_path;
       camera_file_path = static_cast<CameraFilePath *>(eventData);
 
@@ -215,13 +219,7 @@ void GPCamera::Async_WaitEvent(uv_work_t *req) {
       path << "/";
       path << camera_file_path->name;
       event_req->path = path.str();
-  }
-
-
-  if (ret < GP_OK) {
-    event_req->ret = ret;
-  } else {
-    event_req->ret = ret;
+    }
   }
 }
 
@@ -231,17 +229,23 @@ void GPCamera::Async_WaitEventCb(uv_work_t *req, int status) {
 
   Handle<Value> argv[3];
 
+  int argc;
   if (event_req->ret == GP_OK) {
+    argc = 3;
     argv[0] = Undefined();
     argv[1] = cv::CastToJS(event_req->eventType);
     argv[2] = cv::CastToJS(event_req->path);
   } else {
+    argc = 1;
     argv[0] = cv::CastToJS(event_req->ret);
     argv[1] = Undefined();
     argv[2] = Undefined();
   }
 
-  event_req->cb->Call(Context::GetCurrent()->Global(), 3, argv);
+  std::cout << "\nAsync_WaitEventCb: " << event_req->eventType;
+  std::cout  << "\n    path: " << event_req->path;
+
+  event_req->cb->Call(Context::GetCurrent()->Global(), argc, argv);
 
   event_req->cb.Dispose();
   event_req->cameraObject->Unref();
