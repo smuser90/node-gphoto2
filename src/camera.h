@@ -40,6 +40,7 @@ static Persistent<String> camera_getConfig_symbol;
 static Persistent<String> camera_getConfigValue_symbol;
 static Persistent<String> camera_setConfigValue_symbol;
 static Persistent<String> camera_takePicture_symbol;
+static Persistent<String> camera_waitEvent_symbol;
 static Persistent<String> camera_downloadPicture_symbol;
 
 class GPCamera : public node::ObjectWrap {
@@ -60,6 +61,18 @@ class GPCamera : public node::ObjectWrap {
   bool isOpen() {
     return this->camera_ ? true : false;
   }
+
+  struct wait_event_request {
+    Persistent<Function> cb;
+    Camera *camera;
+    GPCamera *cameraObject;
+    GPContext *context;
+    std::string eventType;
+    std::string path;
+    unsigned long int length;  // NOLINT
+    unsigned int timeoutMs;
+    int ret;
+  };
 
   struct take_picture_request {
     Persistent<Function> cb;
@@ -109,6 +122,7 @@ class GPCamera : public node::ObjectWrap {
   static void takePicture(take_picture_request *req);
   static void capturePreview(take_picture_request *req);
   static void downloadPicture(take_picture_request *req);
+  static void waitEvent(wait_event_request *req);
   static int getCameraFile(take_picture_request *req, CameraFile **file);
 
   bool close();
@@ -126,6 +140,7 @@ class GPCamera : public node::ObjectWrap {
   static Handle<Value> SetConfigValue(const Arguments &args);
   static Handle<Value> TakePicture(const Arguments &args);
   static Handle<Value> DownloadPicture(const Arguments& args);
+  static Handle<Value> WaitEvent(const Arguments &args);
   ASYNC_FN(Async_GetConfig);
   ASYNC_CB(Async_GetConfigCb);
   ASYNC_FN(Async_SetConfigValue);
@@ -133,6 +148,8 @@ class GPCamera : public node::ObjectWrap {
   ASYNC_FN(Async_DownloadPicture);
   ASYNC_FN(Async_Capture);
   ASYNC_CB(Async_CaptureCb);
+  ASYNC_FN(Async_WaitEvent);
+  ASYNC_CB(Async_WaitEventCb);
   std::string getPort() {
     return this->port_;
   }

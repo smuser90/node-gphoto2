@@ -45,6 +45,7 @@ void GPCamera::Initialize(Handle<Object> target) {
   ADD_PROTOTYPE_METHOD(camera, getConfig, GetConfig);
   ADD_PROTOTYPE_METHOD(camera, setConfigValue, SetConfigValue);
   ADD_PROTOTYPE_METHOD(camera, takePicture, TakePicture);
+  ADD_PROTOTYPE_METHOD(camera, waitEvent, WaitEvent);
   ADD_PROTOTYPE_METHOD(camera, downloadPicture, DownloadPicture);
   target->Set(String::NewSymbol("Camera"), constructor_template->GetFunction());
 }
@@ -145,6 +146,104 @@ void GPCamera::Async_CaptureCb(uv_work_t *req, int status) {
   gp_context_unref(capture_req->context);
   // gp_camera_unref(capture_req->camera);
   delete capture_req;
+}
+
+
+Handle<Value> GPCamera::WaitEvent(const Arguments& args) {
+  HandleScope scope;
+
+  REQ_OBJ_ARG(0, options);
+  REQ_FUN_ARG(1, cb);
+
+  GPCamera *camera = ObjectWrap::Unwrap<GPCamera>(args.This());
+  camera->Ref();
+  wait_event_request *event_req = new wait_event_request();
+
+  event_req->cb = Persistent<Function>::New(cb);
+  event_req->camera = camera->getCamera();
+  event_req->cameraObject = camera;
+  event_req->context = gp_context_new();
+
+  Local<Value> timeoutMs = options->Get(String::New("timeoutMs"));
+  if (timeoutMs->IsNumber()) {
+    event_req->timeoutMs = cv::CastFromJS<int>(timeoutMs);
+  }
+
+  gp_camera_ref(event_req->camera);
+
+  DO_ASYNC(event_req, Async_WaitEvent, Async_WaitEventCb);
+  return Undefined();
+}
+
+void GPCamera::Async_WaitEvent(uv_work_t *req) {
+  wait_event_request *event_req = static_cast<wait_event_request *>(req->data);
+  int ret;
+
+  event_req->cameraObject->lock();
+
+  CameraEventType eventType;
+  void *eventData;
+
+  ret = gp_camera_wait_for_event(event_req->camera,
+                                 event_req->timeoutMs,
+                                 &eventType,
+                                 &eventData,
+                                event_req->context);
+
+  event_req->cameraObject->unlock();
+
+  std::string type = "unknown";
+  if (eventType == GP_EVENT_TIMEOUT) type = "timeout";
+  if (eventType == GP_EVENT_FILE_ADDED) type = "file_added";
+  if (eventType == GP_EVENT_FOLDER_ADDED) type = "folder_added";
+
+  event_req->eventType = type;
+
+  if (eventType == GP_EVENT_FILE_ADDED || eventType == GP_EVENT_FOLDER_ADDED) {
+      CameraFilePath *camera_file_path;
+      camera_file_path = static_cast<CameraFilePath *>(eventData);
+
+      std::ostringstream path;
+      if (std::string(camera_file_path->folder).compare("/") != 0) {
+        path << camera_file_path->folder;
+      }
+      path << "/";
+      path << camera_file_path->name;
+      event_req->path = path.str();
+  }
+
+
+  if (ret < GP_OK) {
+    event_req->ret = ret;
+  } else {
+    event_req->ret = ret;
+  }
+}
+
+void GPCamera::Async_WaitEventCb(uv_work_t *req, int status) {
+  HandleScope scope;
+  wait_event_request *event_req = static_cast<wait_event_request *>(req->data);
+
+  Handle<Value> argv[3];
+
+  if (event_req->ret == GP_OK) {
+    argv[0] = Undefined();
+    argv[1] = cv::CastToJS(event_req->eventType);
+    argv[2] = cv::CastToJS(event_req->path);
+  } else {
+    argv[0] = cv::CastToJS(event_req->ret);
+    argv[1] = Undefined();
+    argv[2] = Undefined();
+  }
+
+  event_req->cb->Call(Context::GetCurrent()->Global(), 3, argv);
+
+  event_req->cb.Dispose();
+  event_req->cameraObject->Unref();
+  gp_context_unref(event_req->context);
+  gp_camera_unref(event_req->camera);
+
+  delete event_req;
 }
 
 
