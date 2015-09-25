@@ -197,7 +197,6 @@ void GPCamera::Async_WaitEvent(uv_work_t *req) {
 
   event_req->ret = ret;
 
-  event_req->path = "";
   if (eventType == GP_EVENT_TIMEOUT)
     event_req->eventType = "timeout";
   else if (eventType == GP_EVENT_FILE_ADDED)
@@ -220,6 +219,8 @@ void GPCamera::Async_WaitEvent(uv_work_t *req) {
       path << "/";
       path << camera_file_path->name;
       event_req->path = path.str();
+    } else {
+      event_req->path = "";
     }
     // std::cout << "\n-----EVENT TYPE: " << event_req->eventType;
     // std::cout  << "\n ------EVENT PATH: " << event_req->path;
@@ -239,8 +240,9 @@ void GPCamera::Async_WaitEventCb(uv_work_t *req, int status) {
   if (event_req->ret == GP_OK) {
     argc = 3;
     argv[0] = Undefined();
-    argv[1] = cvv8::CastToJS(event_req->eventType.c_str());
-    argv[2] = cvv8::CastToJS(event_req->path.c_str());
+    argv[1] = String::New(event_req->eventType.c_str());
+    // cvv8::CastToJS(event_req->eventType);
+    argv[2] = cvv8::CastToJS(event_req->path);
   } else {
     argc = 1;
     argv[0] = Integer::New(event_req->ret);
