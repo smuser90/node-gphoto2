@@ -187,8 +187,6 @@ void GPCamera::Async_WaitEvent(uv_work_t *req) {
 
   event_req->cameraObject->lock();
 
-  std::cout << "\nAsync_WaitEvent timeoutMs: " << event_req->timeoutMs;
-
   ret = gp_camera_wait_for_event(event_req->camera,
                                  event_req->timeoutMs,
                                  &eventType,
@@ -199,10 +197,15 @@ void GPCamera::Async_WaitEvent(uv_work_t *req) {
 
   event_req->ret = ret;
 
-  event_req->eventType = "unknown";
-  if (eventType == GP_EVENT_TIMEOUT) event_req->eventType = "timeout";
-  if (eventType == GP_EVENT_FILE_ADDED) event_req->eventType = "file_added";
-  if (eventType == GP_EVENT_FOLDER_ADDED) event_req->eventType = "folder_added";
+  event_req->path = "";
+  if (eventType == GP_EVENT_TIMEOUT)
+    event_req->eventType = "timeout";
+  else if (eventType == GP_EVENT_FILE_ADDED)
+    event_req->eventType = "file_added";
+  else if (eventType == GP_EVENT_FOLDER_ADDED)
+    event_req->eventType = "folder_added";
+  else
+    event_req->eventType = "unknown";
 
   if (event_req->ret == GP_OK) {
     if (eventType == GP_EVENT_FILE_ADDED
@@ -218,14 +221,17 @@ void GPCamera::Async_WaitEvent(uv_work_t *req) {
       path << camera_file_path->name;
       event_req->path = path.str();
     }
-    std::cout << "\nAsync_WaitEventCb: " << event_req->eventType;
-    std::cout  << "\n    path: " << event_req->path;
+    std::cout << "\n-----EVENT TYPE: " << event_req->eventType;
+    std::cout  << "\n ------EVENT PATH: " << event_req->path;
   }
 }
 
 void GPCamera::Async_WaitEventCb(uv_work_t *req, int status) {
   HandleScope scope;
   wait_event_request *event_req = static_cast<wait_event_request *>(req->data);
+
+  std::cout << "\n-----EVENT TYPE (CB): " << event_req->eventType;
+  std::cout  << "\n ------EVENT PATH (CB): " << event_req->path;
 
   Handle<Value> argv[3];
 
