@@ -62,12 +62,15 @@ Handle<Value> GPCamera::TakePicture(const Arguments& args) {
     REQ_FUN_ARG(1, cb);
     picture_req = new take_picture_request();
     picture_req->preview = false;
+    picture_req->keepOnCamera = false;
+    picture_req->thumbnail = false;
     picture_req->cb = Persistent<Function>::New(cb);
     Local<Value> dl = options->Get(String::New("download"));
     Local<Value> target = options->Get(String::New("targetPath"));
     Local<Value> preview = options->Get(String::New("preview"));
     Local<Value> socket  = options->Get(String::New("socket"));
     Local<Value> keep  = options->Get(String::New("keepOnCamera"));
+    Local<Value> thumbnail  = options->Get(String::New("thumbnail"));
     if (target->IsString()) {
       picture_req->target_path = cv::CastFromJS<string>(target);
       picture_req->download = true;
@@ -85,10 +88,15 @@ Handle<Value> GPCamera::TakePicture(const Arguments& args) {
     if (keep->IsBoolean()) {
       picture_req->keepOnCamera = keep->ToBoolean()->Value();
     }
+    if (thumbnail->IsBoolean()) {
+      picture_req->thumbnail = thumbnail->ToBoolean()->Value();
+    }
   } else {
     REQ_FUN_ARG(0, cb);
     picture_req = new take_picture_request();
     picture_req->preview = false;
+    picture_req->keepOnCamera = false;
+    picture_req->thumbnail = false;
     picture_req->cb = Persistent<Function>::New(cb);
   }
 
@@ -277,17 +285,21 @@ Handle<Value> GPCamera::DownloadPicture(const Arguments& args) {
   picture_req->cameraObject = camera;
   picture_req->context = gp_context_new();
   picture_req->download = true;
+  picture_req->keepOnCamera = false;
+  picture_req->thumbnail = false;
 
   Local<Value> source = options->Get(String::New("cameraPath"));
   Local<Value> target = options->Get(String::New("targetPath"));
   Local<Value> keep = options->Get(String::New("keepOnCamera"));
+  Local<Value> thumbnail = options->Get(String::New("thumbnail"));
   if (target->IsString()) {
     picture_req->target_path = cv::CastFromJS<string>(target);
   }
   if (keep->IsBoolean()) {
     picture_req->keepOnCamera = keep->ToBoolean()->Value();
-  } else {
-    picture_req->keepOnCamera = false;
+  }
+  if (thumbnail->IsBoolean()) {
+    picture_req->thumbnail = thumbnail->ToBoolean()->Value();
   }
 
   picture_req->path     = cv::CastFromJS<string>(source);

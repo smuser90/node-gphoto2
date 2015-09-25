@@ -304,9 +304,12 @@ void GPCamera::downloadPicture(take_picture_request *req) {
 
   retval = getCameraFile(req, &file);
 
+  CameraFileType fileType;
+  fileType = req->thumbnail ? GP_FILE_TYPE_PREVIEW : GP_FILE_TYPE_NORMAL;
+
   if (retval == GP_OK) {
     retval = gp_camera_file_get(req->camera, folder.str().c_str(), name.c_str(),
-                                GP_FILE_TYPE_NORMAL, file, req->context);
+                                fileType, file, req->context);
   } else {
     req->ret = retval;
     return;
