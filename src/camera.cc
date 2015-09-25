@@ -187,6 +187,7 @@ void GPCamera::Async_WaitEvent(uv_work_t *req) {
 
   event_req->cameraObject->lock();
 
+  std::cout << "\nAsync_WaitEvent timeoutMs: " << event_req->timeoutMs;
 
   ret = gp_camera_wait_for_event(event_req->camera,
                                  event_req->timeoutMs,
@@ -198,14 +199,12 @@ void GPCamera::Async_WaitEvent(uv_work_t *req) {
 
   event_req->ret = ret;
 
-  std::string type = "unknown";
-  if (eventType == GP_EVENT_TIMEOUT) type = "timeout";
-  if (eventType == GP_EVENT_FILE_ADDED) type = "file_added";
-  if (eventType == GP_EVENT_FOLDER_ADDED) type = "folder_added";
+  event_req->eventType = "unknown";
+  if (eventType == GP_EVENT_TIMEOUT) event_req->eventType = "timeout";
+  if (eventType == GP_EVENT_FILE_ADDED) event_req->eventType = "file_added";
+  if (eventType == GP_EVENT_FOLDER_ADDED) event_req->eventType = "folder_added";
 
   if (event_req->ret == GP_OK) {
-    event_req->eventType = type;
-
     if (eventType == GP_EVENT_FILE_ADDED
         || eventType == GP_EVENT_FOLDER_ADDED) {
       CameraFilePath *camera_file_path;
