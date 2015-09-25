@@ -220,7 +220,7 @@ void GPCamera::Async_WaitEvent(uv_work_t *req) {
       path << camera_file_path->name;
       event_req->path = path.str();
     } else {
-      event_req->path = "";
+      event_req->path = "empty";
     }
     // std::cout << "\n-----EVENT TYPE: " << event_req->eventType;
     // std::cout  << "\n ------EVENT PATH: " << event_req->path;
@@ -231,8 +231,6 @@ void GPCamera::Async_WaitEventCb(uv_work_t *req, int status) {
   HandleScope scope;
   wait_event_request *event_req = static_cast<wait_event_request *>(req->data);
 
-  // std::cout << "\n-----EVENT TYPE (CB): " << event_req->eventType;
-  // std::cout  << "\n ------EVENT PATH (CB): " << event_req->path;
 
   Handle<Value> argv[3];
 
@@ -240,8 +238,7 @@ void GPCamera::Async_WaitEventCb(uv_work_t *req, int status) {
   if (event_req->ret == GP_OK) {
     argc = 3;
     argv[0] = Undefined();
-    argv[1] = String::New(event_req->eventType.c_str());
-    // cvv8::CastToJS(event_req->eventType);
+    argv[1] = cvv8::CastToJS(event_req->eventType);
     argv[2] = cvv8::CastToJS(event_req->path);
   } else {
     argc = 1;
