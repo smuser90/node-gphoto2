@@ -220,7 +220,7 @@ void GPCamera::Async_WaitEvent(uv_work_t *req) {
       path << camera_file_path->name;
       event_req->path = path.str();
     } else {
-      event_req->path = "empty";
+      event_req->path = "";
     }
     // std::cout << "\n-----EVENT TYPE: " << event_req->eventType;
     // std::cout  << "\n ------EVENT PATH: " << event_req->path;
