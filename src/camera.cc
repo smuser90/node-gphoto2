@@ -272,8 +272,14 @@ Handle<Value> GPCamera::DownloadPicture(const Arguments& args) {
 
   Local<Value> source = options->Get(String::New("cameraPath"));
   Local<Value> target = options->Get(String::New("targetPath"));
+  Local<Value> keep = options->Get(String::New("keepOnCamera"));
   if (target->IsString()) {
     picture_req->target_path = cv::CastFromJS<string>(target);
+  }
+  if (keep->IsBoolean()) {
+    picture_req->keepOnCamera = keep->ToBoolean()->Value();
+  } else {
+    picture_req->keepOnCamera = false;
   }
 
   picture_req->path     = cv::CastFromJS<string>(source);

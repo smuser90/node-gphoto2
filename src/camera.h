@@ -84,6 +84,7 @@ class GPCamera : public node::ObjectWrap {
     int ret;
     bool download;
     bool preview;
+    bool keepOnCamera;
     std::string path;
     std::string target_path;
     std::string socket_path;
