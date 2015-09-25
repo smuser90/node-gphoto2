@@ -167,6 +167,8 @@ Handle<Value> GPCamera::WaitEvent(const Arguments& args) {
   Local<Value> timeoutMs = options->Get(String::New("timeoutMs"));
   if (timeoutMs->IsNumber()) {
     event_req->timeoutMs = cv::CastFromJS<int>(timeoutMs);
+  } else {
+    event_req->timeoutMs = 3000;
   }
 
   gp_camera_ref(event_req->camera);
