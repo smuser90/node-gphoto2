@@ -130,10 +130,11 @@ void GPCamera::Async_CaptureCb(uv_work_t *req, int status) {
   if (capture_req->ret != GP_OK) {
     argv[0] = Integer::New(capture_req->ret);
   } else if (capture_req->download && !capture_req->target_path.empty()) {
-    argc = 2;
+    argc = 3;
     argv[1] = String::New(capture_req->target_path.c_str());
+    argv[2] = cv::CastToJS(capture_req->path);
   } else if (capture_req->data && capture_req->download) {
-    argc = 2;
+    argc = 3;
     Local<Object> globalObj = Context::GetCurrent()->Global();
     Local<Function> bufferConstructor =
       Local<Function>::Cast(globalObj->Get(String::New("Buffer")));
@@ -147,9 +148,11 @@ void GPCamera::Async_CaptureCb(uv_work_t *req, int status) {
       delete capture_req->data;
     }
     argv[1] = buffer;
+    argv[2] = cv::CastToJS(capture_req->path);
   } else {
-    argc = 2;
+    argc = 3;
     argv[1] = cv::CastToJS(capture_req->path);
+    argv[2] = cv::CastToJS(capture_req->path);
   }
 
   capture_req->cb->Call(Context::GetCurrent()->Global(), argc, argv);
