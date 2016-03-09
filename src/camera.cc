@@ -124,7 +124,7 @@ void GPCamera::Async_CaptureCb(uv_work_t *req, int status) {
   take_picture_request *capture_req =
     static_cast<take_picture_request *>(req->data);
 
-  Handle<Value> argv[2];
+  Handle<Value> argv[3];
   int argc = 1;
   argv[0] = Undefined();
   if (capture_req->ret != GP_OK) {
