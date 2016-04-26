@@ -104,7 +104,7 @@ Handle<Value> GPCamera::TakePicture(const Arguments& args) {
   picture_req->cameraObject = camera;
 
   picture_req->context = gp_context_new();
-  printf("(node-gphoto2) Setting up ASYNC for Capture\n", );
+  printf("(node-gphoto2) Setting up ASYNC for Capture\n");
   DO_ASYNC(picture_req, Async_Capture, Async_CaptureCb);
   return Undefined();
 }
