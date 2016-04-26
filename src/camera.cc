@@ -111,12 +111,15 @@ Handle<Value> GPCamera::TakePicture(const Arguments& args) {
 
 void GPCamera::Async_Capture(uv_work_t *_req) {
   take_picture_request *req = static_cast<take_picture_request *>(_req->data);
+  printf("(node-gphoto2) locking camera\n");
   req->cameraObject->lock();
   if (req->preview) {
     capturePreview(req);
   } else {
+      printf("(node-gphoto2) taking picture\n");
     takePicture(req);
   }
+  printf("(node-gphoto2) unlocking camera\n");
   req->cameraObject->unlock();
 }
 
