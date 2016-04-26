@@ -155,7 +155,9 @@ void GPCamera::Async_CaptureCb(uv_work_t *req, int status) {
     argv[2] = cv::CastToJS(capture_req->path);
   }
 
+  printf("(node-gphoto2) Running Callback for Capture\n");
   capture_req->cb->Call(Context::GetCurrent()->Global(), argc, argv);
+  printf("(node-gphoto2) Callback complete, cleaning up\n");
   capture_req->cb.Dispose();
   if (capture_req->ret == GP_OK) gp_file_free(capture_req->file);
   capture_req->cameraObject->Unref();
