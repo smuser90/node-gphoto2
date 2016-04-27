@@ -57,6 +57,7 @@ Handle<Value> GPCamera::TakePicture(const Arguments& args) {
   camera->Ref();
   take_picture_request *picture_req;
 
+  printf("(node-gphoto2) parsing args...");
   if (args.Length() >= 2) {
     REQ_OBJ_ARG(0, options);
     REQ_FUN_ARG(1, cb);
@@ -99,11 +100,16 @@ Handle<Value> GPCamera::TakePicture(const Arguments& args) {
     picture_req->thumbnail = false;
     picture_req->cb = Persistent<Function>::New(cb);
   }
+  printf("done.\n");
 
+
+  printf("(node-gphoto2) setting up camera object...");
   picture_req->camera = camera->getCamera();
   picture_req->cameraObject = camera;
 
   picture_req->context = gp_context_new();
+  printf("done.\n");
+
   printf("(node-gphoto2) Setting up ASYNC for Capture\n");
   DO_ASYNC(picture_req, Async_Capture, Async_CaptureCb);
   return Undefined();

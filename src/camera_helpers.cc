@@ -358,11 +358,16 @@ void GPCamera::takePicture(take_picture_request *req) {
   int retval;
   CameraFilePath camera_file_path;
 
+  printf("(node-gphoto2) setting up paths...");
   /* NOP: This gets overridden in the library to /capt0000.jpg */
   snprintf(camera_file_path.folder, sizeof(camera_file_path.folder), "/");
   snprintf(camera_file_path.name, sizeof(camera_file_path.name), "foo.jpg");
+  printf("done.\n");
+
+  printf("(node-gphoto2) calling gp_camera_capture...");
   retval = gp_camera_capture(req->camera, GP_CAPTURE_IMAGE, &camera_file_path,
                              req->context);
+  printf("done.\n");
 
   std::ostringstream path;
   if (std::string(camera_file_path.folder).compare("/") != 0) {
@@ -374,6 +379,8 @@ void GPCamera::takePicture(take_picture_request *req) {
   req->ret = retval;
 
   if (retval == GP_OK && req->download) {
+    printf("(node-gphoto2) downloading photo...");
     downloadPicture(req);
+    printf("done.\n");
   }
 }
