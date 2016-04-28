@@ -329,8 +329,10 @@ void GPCamera::downloadPicture(take_picture_request *req) {
   }
 
   if (retval == GP_OK && !req->keepOnCamera) {
+    printf("(node-gphoto2) removing image from camera (%s/%s)...", folder.str().c_str(), name.c_str());
     retval = gp_camera_file_delete(req->camera, folder.str().c_str(),
                                    name.c_str(), req->context);
+    printf("done (%d).\n", retval);
   }
 
   gp_file_free(file);
