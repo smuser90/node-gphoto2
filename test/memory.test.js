@@ -1,15 +1,36 @@
 var GPhoto2 = require('../build/Release/gphoto2');
-var gphoto2 = new GPhoto2.GPhoto2();
-var os = require('os');
+var should = require('should');
 
-var i =  100;
-var list = function () {
-    gphoto2.list(function (cameras) {
-        console.log(process.memoryUsage(), os.freemem());
-        if (i--) {
-            list();
-        }
-    });
+var rssMemoryUsageInMB = function () {
+    return (process.memoryUsage().rss / (1024 * 1024));
 };
 
-list();
+var list = function (repeatsLeft, done) {
+    var gphoto2 = new GPhoto2.GPhoto2();
+    gphoto2.list(function (cameraHandlers) {
+        // console.log(rssMemoryUsageInMB().toFixed(5) + ' Mb');
+
+        repeatsLeft--;
+        if (repeatsLeft > 0) {
+            list(repeatsLeft, done);
+        } else {
+            done();
+        }
+    })
+};
+
+describe('multiple calling gphoto list method', function () {
+    it('should not increase memory usage that much', function (done) {
+        this.timeout(20 * 1000);
+        var initialMemory = rssMemoryUsageInMB();
+        var repeats = 100;
+
+        list(repeats, function () {
+            var finalMemory = rssMemoryUsageInMB();
+            var memoryIncrease = finalMemory - initialMemory;
+            var memoryIncreasePerCall = memoryIncrease / repeats;
+            memoryIncreasePerCall.should.be.below(1);
+            done();
+        });
+    });
+});
