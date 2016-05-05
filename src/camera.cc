@@ -48,6 +48,7 @@ void GPCamera::Initialize(Handle<Object> target) {
   ADD_PROTOTYPE_METHOD(camera, takePicture, TakePicture);
   ADD_PROTOTYPE_METHOD(camera, waitEvent, WaitEvent);
   ADD_PROTOTYPE_METHOD(camera, downloadPicture, DownloadPicture);
+//  ADD_PROTOTYPE_METHOD(camera, close, Close);
   target->Set(String::NewSymbol("Camera"), constructor_template->GetFunction());
 }
 
@@ -505,6 +506,7 @@ Camera* GPCamera::getCamera() {
 
 bool GPCamera::close() {
   // this->gphoto_->Unref();
+  printf("closing");
   if (this->camera_) {
     return gp_camera_exit(this->camera_, this->gphoto_->getContext()) < GP_OK
       ? false

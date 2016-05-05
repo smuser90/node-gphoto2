@@ -29,7 +29,7 @@ describe('multiple calling gphoto list method', function () {
             var finalMemory = rssMemoryUsageInMB();
             var memoryIncrease = finalMemory - initialMemory;
             var memoryIncreasePerCall = memoryIncrease / repeats;
-            memoryIncreasePerCall.should.be.below(1);
+            memoryIncreasePerCall.should.be.below(1, 'each call should be increasing memory usage by max 1 Mb');
             done();
         });
     });

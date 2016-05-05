@@ -25,10 +25,10 @@ describe('gphoto library', function () {
         var doneCount = obj.cameraHandlers.length;
         obj.cameraHandlers.forEach(function (cameraHandler) {
             cameraHandler.getConfig(function (error, settings) {
-                should.equal(error, undefined, 'no error thrown');
+                should.equal(error, undefined, 'error occurred while getting camera config');
                 var serialNumber = _.get(settings, 'main.children.status.children.serialnumber.value', null);
                 should.notEqual(serialNumber, null, 'serial number is in settings');
-                should.ok(typeof serialNumber === 'string' && serialNumber !== '', 'serial number is non-empty string');
+                should.ok(typeof serialNumber === 'string' && serialNumber !== '', 'serial number isn\'t non-empty string');
 
                 doneCount--;
                 if (doneCount === 0) {

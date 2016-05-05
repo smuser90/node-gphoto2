@@ -142,6 +142,7 @@ class GPCamera : public node::ObjectWrap {
   static Handle<Value> TakePicture(const Arguments &args);
   static Handle<Value> DownloadPicture(const Arguments& args);
   static Handle<Value> WaitEvent(const Arguments &args);
+//  static Handle<Value> Close(const Arguments &args);
   ASYNC_FN(Async_GetConfig);
   ASYNC_CB(Async_GetConfigCb);
   ASYNC_FN(Async_SetConfigValue);

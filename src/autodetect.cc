@@ -52,7 +52,6 @@ int autodetect(CameraList *list, GPContext *context,
   }
   out:
     gp_list_free(xlist);
-//    gp_abilities_list_free(*abilities);
     return gp_list_count(list);
 }
 
