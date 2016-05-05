@@ -50,8 +50,6 @@ describe "node-gphoto2", ()->
     @timeout 5000
     async.series [
       (cb)->cameras[0].setConfigValue "capturetarget", 0, cb
-      # (cb)->cameras[0].setConfigValue "eosviewfinder", 0, cb
-      # (cb)->cameras[0].setConfigValue "uilock", 1, cb
     ], done
 
   describe 'should be able to take a picture', ()->
@@ -115,26 +113,6 @@ describe "node-gphoto2", ()->
         done()
       catch error
         done error
-
-  describe 'should be able to take a preview picture', ()->
-    before (done)->
-      fs.unlink '/tmp/preview.sock', ()->done()
-    it 'and send it over a socket', (done)->
-      @timeout 10000
-      server = net.createServer (c)->
-        c.on 'end', ()->
-          server.close()
-          done()
-      server.listen '/tmp/preview.sock'
-      server.on 'error', ()->
-        log arguments
-      server.on 'listening', ()->
-        cameras[0].takePicture preview:true, socket:'/tmp/preview.sock', (er)->
-          try
-            should.not.exist er
-            done()
-          catch error
-            done error
 
     # clean up our mess :)
     after ()->

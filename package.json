@@ -23,7 +23,6 @@
     "pre-commit": "^0.0.8",
     "should": "^1.2.2",
     "sinon": "^1.6.0",
-    "superagent": "^0.14.9",
     "underscore": "^1.4.4"
   },
   "pre-commit": [
