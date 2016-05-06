@@ -8,7 +8,9 @@ var rssMemoryUsageInMB = function () {
 var list = function (repeatsLeft, done) {
     var gphoto2 = new GPhoto2.GPhoto2();
     gphoto2.list(function (cameraHandlers) {
-        // console.log(rssMemoryUsageInMB().toFixed(5) + ' Mb');
+        cameraHandlers.forEach(function (cameraHandler) {
+            cameraHandler.clearMemory();
+        });
 
         repeatsLeft--;
         if (repeatsLeft > 0) {
@@ -29,6 +31,7 @@ describe('multiple calling gphoto list method', function () {
             var finalMemory = rssMemoryUsageInMB();
             var memoryIncrease = finalMemory - initialMemory;
             var memoryIncreasePerCall = memoryIncrease / repeats;
+            console.log('Repeats: ' + repeats + '; Total memory increase: ' + memoryIncrease + ' Mb; Memory increase per call: ' + memoryIncreasePerCall + ' Mb');
             memoryIncreasePerCall.should.be.below(1, 'each call should be increasing memory usage by max 1 Mb');
             done();
         });

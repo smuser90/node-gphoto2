@@ -48,8 +48,15 @@ void GPCamera::Initialize(Handle<Object> target) {
   ADD_PROTOTYPE_METHOD(camera, takePicture, TakePicture);
   ADD_PROTOTYPE_METHOD(camera, waitEvent, WaitEvent);
   ADD_PROTOTYPE_METHOD(camera, downloadPicture, DownloadPicture);
-//  ADD_PROTOTYPE_METHOD(camera, close, Close);
+  ADD_PROTOTYPE_METHOD(camera, clearMemory, ClearMemory);
   target->Set(String::NewSymbol("Camera"), constructor_template->GetFunction());
+}
+
+Handle<Value> GPCamera::ClearMemory(const Arguments& args) {
+  HandleScope scope;
+  GPCamera *camera = ObjectWrap::Unwrap<GPCamera>(args.This());
+  camera->gphoto_->resetAbilitiesList();
+  return Undefined();
 }
 
 Handle<Value> GPCamera::TakePicture(const Arguments& args) {

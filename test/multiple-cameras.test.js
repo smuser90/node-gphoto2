@@ -30,6 +30,7 @@ describe('gphoto library', function () {
                 should.notEqual(serialNumber, null, 'serial number is in settings');
                 should.ok(typeof serialNumber === 'string' && serialNumber !== '', 'serial number isn\'t non-empty string');
 
+                cameraHandler.clearMemory();
                 doneCount--;
                 if (doneCount === 0) {
                     done();

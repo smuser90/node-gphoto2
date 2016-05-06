@@ -63,6 +63,10 @@ class GPhoto2: public node::ObjectWrap {
   void setAbilitiesList(CameraAbilitiesList *p) {
     this->abilities_ = p;
   }
+  void resetAbilitiesList() {
+//    CameraAbilitiesList *abilitiesList = this->getAbilitiesList();
+    gp_abilities_list_reset(this->abilities_);
+  }
   int openCamera(GPCamera *camera);
   int closeCamera(GPCamera *camera);
   static void LogHandler(GPLogLevel level, const char *domain,
