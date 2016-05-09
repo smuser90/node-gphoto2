@@ -8,8 +8,9 @@ var rssMemoryUsageInMB = function () {
 var list = function (repeatsLeft, done) {
     var gphoto2 = new GPhoto2.GPhoto2();
     gphoto2.list(function (cameraHandlers) {
+        // console.log(rssMemoryUsageInMB().toFixed(5) + ' Mb');
         cameraHandlers.forEach(function (cameraHandler) {
-            cameraHandler.clearMemory();
+            cameraHandler.close();
         });
 
         repeatsLeft--;
