@@ -42,6 +42,7 @@ static Persistent<String> camera_setConfigValue_symbol;
 static Persistent<String> camera_takePicture_symbol;
 static Persistent<String> camera_waitEvent_symbol;
 static Persistent<String> camera_downloadPicture_symbol;
+static Persistent<String> camera_close_symbol;
 
 class GPCamera : public node::ObjectWrap {
   uv_mutex_t cameraMutex;
@@ -141,6 +142,7 @@ class GPCamera : public node::ObjectWrap {
   static Handle<Value> SetConfigValue(const Arguments &args);
   static Handle<Value> TakePicture(const Arguments &args);
   static Handle<Value> DownloadPicture(const Arguments& args);
+  static Handle<Value> Close(const Arguments& args);
   static Handle<Value> WaitEvent(const Arguments &args);
   ASYNC_FN(Async_GetConfig);
   ASYNC_CB(Async_GetConfigCb);

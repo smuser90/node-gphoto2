@@ -18,6 +18,7 @@ class GPhoto2: public node::ObjectWrap {
 
   GPPortInfoList   *portinfolist_;
   CameraAbilitiesList  *abilities_;
+  int connections = 0;
 
   struct log_request {
     int level;
@@ -63,6 +64,8 @@ class GPhoto2: public node::ObjectWrap {
   void setAbilitiesList(CameraAbilitiesList *p) {
     this->abilities_ = p;
   }
+  void close();
+  int decrementConnections();
   int openCamera(GPCamera *camera);
   int closeCamera(GPCamera *camera);
   static void LogHandler(GPLogLevel level, const char *domain,
