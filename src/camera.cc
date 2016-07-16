@@ -115,6 +115,8 @@ Handle<Value> GPCamera::TakePicture(const Arguments& args) {
   picture_req->camera = camera->getCamera();
   picture_req->cameraObject = camera;
 
+  gp_camera_ref(camera); // added -EP
+
   picture_req->context = gp_context_new();
   printf("done.\n");
 
