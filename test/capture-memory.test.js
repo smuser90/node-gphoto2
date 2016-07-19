@@ -67,7 +67,7 @@ function captureSequence(count, callback) {
     if(imageIndex < count) {
         capture(function() {
             setTimeout(function(){
-                captureSequence(count);
+                captureSequence(count, callback);
             }, 5000);
         });
     } else {
