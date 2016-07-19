@@ -115,6 +115,8 @@ Handle<Value> GPCamera::TakePicture(const Arguments& args) {
   picture_req->camera = camera->getCamera();
   picture_req->cameraObject = camera;
 
+  gp_camera_ref(picture_req->camera); // added -EP
+
   picture_req->context = gp_context_new();
   printf("done.\n");
 
@@ -182,7 +184,7 @@ void GPCamera::Async_CaptureCb(uv_work_t *req, int status) {
   if (capture_req->ret == GP_OK) gp_file_free(capture_req->file);
   capture_req->cameraObject->Unref();
   gp_context_unref(capture_req->context);
-  // gp_camera_unref(capture_req->camera);
+  gp_camera_unref(capture_req->camera); // not sure why this was commented out before - seems to be a memory leak -EP
   delete capture_req;
 }
 
