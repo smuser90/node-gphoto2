@@ -64,13 +64,12 @@ function capture(callback) {
 }
 
 function captureSequence(count, callback) {
-    if(count > 0) {
-        count--;
-        setTimeout(function(){
-            capture(function() {
+    if(imageIndex < count) {
+        capture(function() {
+            setTimeout(function(){
                 captureSequence(count);
-            });
-        }, 5000);
+            }, 5000);
+        });
     } else {
         callback();
     }
@@ -79,7 +78,7 @@ function captureSequence(count, callback) {
 describe('capture image sequence', function () {
     it('should not increase memory usage that much', function (done) {
         var count = 20;
-        this.timeout(20 * 1000 * count);
+        this.timeout(25 * 1000 * count);
 
         getCamera(function(){
             var initialMemory = rssMemoryUsageInMB();
