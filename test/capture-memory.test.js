@@ -42,9 +42,7 @@ function processRawPath(path, info, callback) {
         fs.unlink(path);
     });
 
-    callback(err, {
-        file: info
-    });
+    callback();
 }
 
 function capture(callback) {
@@ -68,15 +66,17 @@ function capture(callback) {
 function captureSequence(count, callback) {
     if(count > 0) {
         count--;
-        capture(function() {
-            process.nextTick(function(){captureSequence(count)});
-        });
+        setTimeout(function(){
+            capture(function() {
+                captureSequence(count);
+            });
+        }, 5000);
     } else {
         callback();
     }
 }
 
-describe('multiple calling gphoto list method', function () {
+describe('capture image sequence', function () {
     it('should not increase memory usage that much', function (done) {
         this.timeout(20 * 1000);
 
