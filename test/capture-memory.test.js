@@ -78,11 +78,11 @@ function captureSequence(count, callback) {
 
 describe('capture image sequence', function () {
     it('should not increase memory usage that much', function (done) {
-        this.timeout(20 * 1000);
+        var count = 20;
+        this.timeout(20 * 1000 * count);
 
         getCamera(function(){
             var initialMemory = rssMemoryUsageInMB();
-            var count = 20;
 
             captureSequence(count, function () {
                 var finalMemory = rssMemoryUsageInMB();
