@@ -3,7 +3,7 @@ var should = require('should');
 var execFile = require('child_process').execFile;
 var fs = require('fs');
 
-var GPhoto = new gphoto2.GPhoto2();
+var GPhoto = new GPhoto2.GPhoto2();
 var camera = null;
 
 var rssMemoryUsageInMB = function () {
