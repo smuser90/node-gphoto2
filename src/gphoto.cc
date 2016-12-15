@@ -1,6 +1,6 @@
 /* Copyright contributors of the node-gphoto2 project */
 
-#include <string>
+#include <string.h>
 #include "camera.h"  // NOLINT
 #include "gphoto.h"  // NOLINT
 
