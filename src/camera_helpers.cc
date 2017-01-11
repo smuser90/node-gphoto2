@@ -1,9 +1,9 @@
 /* Copyright contributors of the node-gphoto2 project */
 
-#include <errno>
-#include <sys/socket>
-#include <sys/types>
-#include <sys/un>
+#include <errno.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/un.h>
 #include <unistd>
 #include <cstring>
 #include <ctime>
