@@ -1,8 +1,8 @@
 /* Copyright contributors of the node-gphoto2 project */
 
 #include <gphoto2/gphoto2-widget.h>
-#include <sstream.h>
-#include <string.h>
+#include <sstream>
+#include <string>
 #include "camera.h"  // NOLINT
 
 using std::string;
