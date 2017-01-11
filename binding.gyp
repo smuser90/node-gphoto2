@@ -11,6 +11,7 @@
       ],
       'link_settings': {
         'libraries': [
+	  '-L/usr/lib/',
           '-lgphoto2',
           '-lgphoto2_port'
         ]
