@@ -5,10 +5,10 @@
 #include <sys/types.h>
 #include <sys/un.h>
 #include <unistd.h>
-#include <cstring.h>
-#include <ctime.h>
-#include <sstream.h>
-#include <string.h>
+#include <cstring>
+#include <ctime>
+#include <sstream>
+#include <string>
 #include "camera.h"  // NOLINT
 
 namespace cv = cvv8;
