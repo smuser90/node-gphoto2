@@ -2,7 +2,7 @@
 
 #include <gphoto2/gphoto2-camera.h>
 #include <stdio.h>
-#include <string>
+#include <string.h>
 #include "binding.h"  // NOLINT
 
 /**

@@ -355,6 +355,8 @@ void GPCamera::capturePreview(take_picture_request *req) {
   }
 
   req->ret = retval;
+
+  // return file->data; file->size;
 }
 
 void GPCamera::takePicture(take_picture_request *req) {
