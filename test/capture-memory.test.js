@@ -50,7 +50,7 @@ function capture(callback) {
     var captureOptions = {
         targetPath: '/tmp/tmpXXXXXX',
         keepOnCamera: false
-    }
+    };
     camera.takePicture(captureOptions, function(err, photo, info) {
         console.log("running camera.takePicture() -> callback()");
         if (!err && photo) {
@@ -91,9 +91,8 @@ describe('capture image sequence', function () {
                 memoryIncreasePerCall.should.be.below(1, 'each call should be increasing memory usage by max 1 Mb');
                 done();
             });
-            
+
         });
 
     });
 });
-
