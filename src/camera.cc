@@ -59,7 +59,7 @@ Handle<Value>GPCamera::Close(const Arguments& args) {
   GPCamera   *camera = ObjectWrap::Unwrap<GPCamera>(args.This());
 
   camera->gphoto_->decrementConnections();
-  camera->GPCamera::~GPCamera();
+  camera->close();
   return Undefined();
 }
 
@@ -430,9 +430,9 @@ void GPCamera::Async_GetConfig(uv_work_t *req) {
   if (ret < GP_OK) {
     config_req->ret = ret;
   } else {
-    ret             = enumConfig(config_req,
-                                 config_req->root,
-                                 &config_req->settings);
+    ret = enumConfig(config_req,
+                     config_req->root,
+                     &config_req->settings);
     config_req->ret = ret;
   }
 }
